@@ -10,6 +10,7 @@ export class ParticipantesController {
 
     @Post()
     create(@Body() dto: CreateParticipanteDto) {
+        console.log("DATA RECIBIDA DESDE GOOGLE FORMS:", dto);
         return this.participantesService.create(dto);
     }
 
