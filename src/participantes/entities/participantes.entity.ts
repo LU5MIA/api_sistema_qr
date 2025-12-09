@@ -1,5 +1,5 @@
 import { Sesiones } from 'src/sesiones/entities/sesiones.entity';
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
 
 @Entity('participantes')
 
@@ -26,5 +26,6 @@ export class Participantes {
   fecha: Date;
 
   @ManyToOne(() => Sesiones, sesion => sesion.participantes)
+  @JoinColumn({ name: 'id_sesion' })
   sesion: Sesiones;
 }
