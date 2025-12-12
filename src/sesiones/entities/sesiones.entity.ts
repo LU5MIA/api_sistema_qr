@@ -11,6 +11,9 @@ export class Sesiones {
     
     @Column()
     lugar: string;
+
+    @Column({ type: 'longtext', nullable: true })
+    qrCode: string;
     
     @Column({ type: 'datetime' })
     fecha: Date;
