@@ -14,22 +14,13 @@ export class SesionesService {
     ) { }
 
     async create(data: createSesionesDto) {
-        // Primero crea la sesión
         const nuevaSesion = this.sesionesRepo.create(data);
         const sesionGuardada = await this.sesionesRepo.save(nuevaSesion);
 
-        // Generar el URL para el formulario prellenado
-        const qrUrl = this.buildFormUrl(sesionGuardada.id_sesion, sesionGuardada.titulo);
+        // 🔁 Generamos QR usando la mejor práctica
+        await this.regenerarQR(sesionGuardada);
 
-        // Generar el código QR
-        const qrDataUrl = await this.generateQRCodeDataUrl(qrUrl);
-
-        // Si quieres, guardas el QR en la base de datos
-        // (suponiendo que has agregado un campo `qrCode` en la entidad Sesiones)
-        sesionGuardada.qrCode = qrDataUrl;
-        await this.sesionesRepo.save(sesionGuardada);
-
-        return sesionGuardada;
+        return await this.sesionesRepo.save(sesionGuardada);
     }
 
 
@@ -57,6 +48,16 @@ export class SesionesService {
         return await QRCode.toDataURL(url, { width: 300 });
     }
 
+    private async regenerarQR(sesion: Sesiones) {
+        const qrUrl = this.buildFormUrl(
+            sesion.id_sesion,
+            sesion.titulo
+        );
+
+        sesion.qrCode = await this.generateQRCodeDataUrl(qrUrl);
+    }
+
+
     async findOne(id: number) {
         const sesion = await this.sesionesRepo.findOne({
             where: { id_sesion: id },
@@ -81,9 +82,19 @@ export class SesionesService {
             throw new NotFoundException('Sesión no encontrada');
         }
 
+        // Detectamos cambios que afectan al QR
+        const cambiaTitulo =
+            data.titulo && data.titulo !== sesion.titulo;
+
         Object.assign(sesion, data);
+
+        if (cambiaTitulo) {
+            await this.regenerarQR(sesion);
+        }
+
         return await this.sesionesRepo.save(sesion);
     }
+
 
     async remove(id: number) {
         const sesion = await this.sesionesRepo.findOne({
