@@ -1,7 +1,8 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Delete, Put } from '@nestjs/common';
 import { Body, Get, Param, Post } from '@nestjs/common';
 import { SesionesService } from './sesiones.service';
 import { createSesionesDto } from './dto/create-sesiones.dto';
+import { UpdateSesionesDto } from './dto/update-sesiones.dto';
 
 @Controller('sesiones')
 export class SesionesController {
@@ -22,5 +23,19 @@ export class SesionesController {
     findOne(@Param('id') id: number) {
         return this.sesionesService.findOne(id);
     }
+
+    @Put(':id')
+    update(
+        @Param('id') id: number,
+        @Body() dto: UpdateSesionesDto,
+    ) {
+        return this.sesionesService.update(id, dto);
+    }
+
+    @Delete(':id')
+    remove(@Param('id') id: number) {
+        return this.sesionesService.remove(id);
+    }
+
 
 }

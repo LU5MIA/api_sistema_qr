@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Sesiones } from './entities/sesiones.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { createSesionesDto } from './dto/create-sesiones.dto';
 import * as QRCode from 'qrcode';
+import { UpdateSesionesDto } from './dto/update-sesiones.dto';
 
 @Injectable()
 export class SesionesService {
@@ -69,6 +70,32 @@ export class SesionesService {
             fecha: this.formatDateTime(sesion.fecha),
             qrCode: sesion.qrCode // data:image/png;base64,...
         };
+    }
+
+    async update(id: number, data: UpdateSesionesDto) {
+        const sesion = await this.sesionesRepo.findOne({
+            where: { id_sesion: id },
+        });
+
+        if (!sesion) {
+            throw new NotFoundException('Sesión no encontrada');
+        }
+
+        Object.assign(sesion, data);
+        return await this.sesionesRepo.save(sesion);
+    }
+
+    async remove(id: number) {
+        const sesion = await this.sesionesRepo.findOne({
+            where: { id_sesion: id },
+        });
+
+        if (!sesion) {
+            throw new NotFoundException('Sesión no encontrada');
+        }
+
+        await this.sesionesRepo.remove(sesion);
+        return { message: 'Sesión eliminada correctamente' };
     }
 
     formatDateTime(date: Date): string {
