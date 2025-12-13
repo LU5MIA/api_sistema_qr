@@ -11,7 +11,7 @@ export class ParticipantesService {
         @InjectRepository(Participantes)
         private participantesRepo: Repository<Participantes>,
     ) { }
- 
+
     async create(data: CreateParticipanteDto) {
         const nuevo = this.participantesRepo.create(data);
         return await this.participantesRepo.save(nuevo);
@@ -29,5 +29,15 @@ export class ParticipantesService {
             relations: ['sesion'],
         });
     }
+
+    async findBySesion(sesionId: number) {
+        return await this.participantesRepo.find({
+            where: {
+                sesion: { id_sesion: sesionId },
+            },
+            relations: ['sesion'],
+        });
+    }
+
 
 }

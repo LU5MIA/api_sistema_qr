@@ -23,4 +23,9 @@ export class ParticipantesController {
     findOne(@Param('id') id: number) {
         return this.participantesService.findOne(id);
     }
+
+    @Get('sesion/:id')
+    getParticipantesBySesion(@Param('id') id: number) {
+        return this.participantesService.findBySesion(id);
+    }
 }
