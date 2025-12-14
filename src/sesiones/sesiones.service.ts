@@ -17,7 +17,6 @@ export class SesionesService {
         const nuevaSesion = this.sesionesRepo.create(data);
         const sesionGuardada = await this.sesionesRepo.save(nuevaSesion);
 
-        // 🔁 Generamos QR usando la mejor práctica
         await this.regenerarQR(sesionGuardada);
 
         return await this.sesionesRepo.save(sesionGuardada);
@@ -37,14 +36,13 @@ export class SesionesService {
 
     private buildFormUrl(sessionId: number, titulo: string): string {
         const base = 'https://docs.google.com/forms/d/e/1FAIpQLSfi3QPIjlN9towBTSq6wZVBV72ctLqgLFHz4gF1V4pzYozaYA/viewform?usp=pp_url';
-        const entryId = 'entry.923954382';       // ID de sesión
-        const entryTitulo = 'entry.1010727002';  // Título visible
+        const entryId = 'entry.923954382';       
+        const entryTitulo = 'entry.1010727002';  
         return `${base}&${entryId}=${encodeURIComponent(sessionId.toString())}&${entryTitulo}=${encodeURIComponent(titulo)}`;
     }
 
 
     async generateQRCodeDataUrl(url: string): Promise<string> {
-        // genera data:image/png;base64,... listo para usar en <img>
         return await QRCode.toDataURL(url, { width: 300 });
     }
 
@@ -69,7 +67,7 @@ export class SesionesService {
         return {
             ...sesion,
             fecha: this.formatDateTime(sesion.fecha),
-            qrCode: sesion.qrCode // data:image/png;base64,...
+            qrCode: sesion.qrCode 
         };
     }
 
@@ -82,7 +80,6 @@ export class SesionesService {
             throw new NotFoundException('Sesión no encontrada');
         }
 
-        // Detectamos cambios que afectan al QR
         const cambiaTitulo =
             data.titulo && data.titulo !== sesion.titulo;
 

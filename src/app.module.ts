@@ -5,6 +5,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { ParticipantesModule } from './participantes/participantes.module';
 import { SesionesModule } from './sesiones/sesiones.module';
+import { UsuariosModule } from './usuarios/usuarios.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -25,6 +27,8 @@ import { SesionesModule } from './sesiones/sesiones.module';
 
     ParticipantesModule,
     SesionesModule,
+    UsuariosModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
