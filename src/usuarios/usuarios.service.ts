@@ -11,7 +11,7 @@ export class UsuariosService {
         private usuariosRepository: Repository<Usuarios>,
     ) { }
 
-    async getAll(){
+    async getAll() {
         return await this.usuariosRepository.find();
     }
 
@@ -23,14 +23,18 @@ export class UsuariosService {
         return usuario;
     }
 
-    async update(id: number, data: Partial<Usuarios>){
-        const usuario = await this.usuariosRepository.findOneBy({ id_usuario: id });
-        if (!usuario) {
+    async update(id: number, data: Partial<Usuarios>) {
+        const result = await this.usuariosRepository.update(
+            { id_usuario: id },
+            data
+        );
+
+        if (result.affected === 0) {
             throw new Error('Usuario no encontrado');
         }
 
-        Object.assign(usuario, data);
-        return await this.usuariosRepository.save(usuario);
+        return this.getById(id);
     }
+
 
 }
