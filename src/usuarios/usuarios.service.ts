@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Usuarios } from './entities/usuarios.entity';
+import { UpdateUsuariosDto } from './dto/update-usuarios.dto';
 
 @Injectable()
 export class UsuariosService {
@@ -11,7 +12,7 @@ export class UsuariosService {
         private usuariosRepository: Repository<Usuarios>,
     ) { }
 
-    async getAll(){
+    async getAll() {
         return await this.usuariosRepository.find();
     }
 
@@ -23,14 +24,28 @@ export class UsuariosService {
         return usuario;
     }
 
-    async update(id: number, data: Partial<Usuarios>){
-        const usuario = await this.usuariosRepository.findOneBy({ id_usuario: id });
-        if (!usuario) {
+    async update(id: number, dto: UpdateUsuariosDto) {
+        const data: Partial<Usuarios> = {};
+
+        if (dto.nombre_usuario !== undefined) {
+            data.nombre_usuario = dto.nombre_usuario;
+        }
+
+        if (dto.password !== undefined) {
+            data.password = dto.password;
+        }
+
+        const result = await this.usuariosRepository.update(
+            { id_usuario: id },
+            data
+        );
+
+        if (result.affected === 0) {
             throw new Error('Usuario no encontrado');
         }
 
-        Object.assign(usuario, data);
-        return await this.usuariosRepository.save(usuario);
+        return this.getById(id);
     }
+
 
 }
