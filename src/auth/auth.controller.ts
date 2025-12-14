@@ -9,7 +9,7 @@ import { UnauthorizedException } from '@nestjs/common';
 export class AuthController {
     constructor(private readonly authService: AuthService) { }
 
-    @Post('login')
+    @Post('auth/login')
     async login(@Body() dto: loginDto) {
         try {
             return await this.authService.login(dto.nombre_usuario, dto.password);
